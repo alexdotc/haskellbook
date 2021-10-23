@@ -1,5 +1,114 @@
 import Data.List
 
+data Trivial = Trivial' deriving Show
+
+instance Eq Trivial where Trivial' == Trivial' = True
+
+data DayOfWeek = Mon | Tue | Wed | Thu | Fri | Sat | Sun deriving Show
+
+data Date = Date DayOfWeek Int deriving Show
+
+instance Eq DayOfWeek where
+  (==) Mon Mon = True
+  (==) Tue Tue = True
+  (==) Wed Wed = True
+  (==) Thu Thu = True
+  (==) Fri Fri = True
+  (==) Sat Sat = True
+  (==) Sun Sun = True
+  (==)   _   _ = False
+
+instance Eq Date where
+  (==) (Date weekday dayOfMonth)
+       (Date weekday' dayOfMonth')
+      =  weekday == weekday'
+      && dayOfMonth == dayOfMonth'
+
+data Identity a = Identity a
+
+instance Eq a => Eq (Identity a) where
+  (==) (Identity v) (Identity v') = v == v'
+
+data NoEqInst = NoEqInst | MaybeEqInst
+
+-- Exercises pg 178
+
+data TisAnInteger = TisAn Integer deriving Show
+instance Eq TisAnInteger where
+  (==) (TisAn a) (TisAn a') = a == a'
+
+data TwoIntegers = Two Integer Integer deriving Show
+instance Eq TwoIntegers where
+  (==) (Two a b) (Two a' b') = (a == a') && (b == b')
+
+data StringOrInt = TisAnInt Int | TisAString String deriving Show
+instance Eq StringOrInt where
+  TisAnInt a == TisAnInt a' = a == a'
+  TisAString a == TisAString a' = a == a'
+  _ == _ = False
+
+data Pair a = Pair a a deriving Show
+instance Eq a => Eq (Pair a) where
+  Pair a b == Pair a' b' = (a == a') && (b == b')
+
+data Tuple a b = Tuple a b deriving Show
+instance (Eq a, Eq b) => Eq (Tuple a b) where
+  (==) (Tuple w x) (Tuple y z) = (w == y) && (x == z)
+
+data Which a = ThisOne a | ThatOne a deriving Show
+instance Eq a => Eq (Which a) where
+  (==) (ThisOne a) (ThisOne a') = (==) a a'
+  (==) (ThatOne a) (ThatOne a') = (==) a a'
+  (==) (ThisOne a) (ThatOne a') = (==) a a'
+  (==) (ThatOne a) (ThisOne a') = (==) a a'
+
+
+-- TODO ??????
+data EitherOr a b = Hello a | Goodbye b deriving Show
+instance (Eq a, Eq b) => Eq (EitherOr a b) where
+  (==) (Hello a) (Hello a') = a == a'
+  (==) (Goodbye a) (Goodbye a') = a == a'
+  (==) _ _ = False
+
+
+--divideThenAdd :: Num a => a -> a -> a Hum doesn't have (/)
+divideThenAdd :: Fractional a => a -> a -> a
+divideThenAdd x y = (x / y) + 1
+
+-- pg 182
+-- Fractional requires that any types that implement it's methods already have an instance of Num. So the requirement is commutative.
+
+-- pg 192
+
+--1. yes, max works on anything that implements ord like Num a. return 5
+--2. yes, compare works on anything that implements ord like Num a . return LT :: Ordering
+--3. no, we're trying to compare 2 different types 
+--4. yes. return False
+
+class Numberish a where
+  fromNumber :: Integer -> a
+  toNumber :: a -> Integer
+  defaultNumber :: a
+
+newtype Age = Age Integer deriving (Eq, Show)
+newtype Year = Year Integer deriving (Eq, Show)
+
+instance Numberish Age where
+  fromNumber n = Age n
+  toNumber (Age n) = n
+  defaultNumber = Age 24
+
+instance Numberish Year where
+  fromNumber n = Year n
+  toNumber (Year n) = n
+  defaultNumber = Year 1997
+
+sumNumberish :: Numberish a => a -> a -> a
+sumNumberish a a' = fromNumber summed
+  where integerOfA = toNumber a
+        integerOfA' = toNumber a'
+        summed = integerOfA + integerOfA'
+
 -- Exercises pg 206
 --
 -- 1 c

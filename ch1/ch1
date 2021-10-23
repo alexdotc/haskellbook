@@ -1,0 +1,29 @@
+Intermission: Equivalence Exercises
+
+1. lambda xy: xz
+    ANSWER b -- lambda mn: mz is equivalent
+2. lambda xy: xxy
+    ANSWER c -- lambda a: lambda b: aab is equivalent
+3. lamda xyz.zx
+    ANSWER b -- lambda tos: st is equivalent
+
+CHAPTER EXERCISES
+
+Combinators
+
+1. lambda x: xxx is a combinator
+2. lambda xy: zx is not a combinator since z is a free variable
+3. lambda xyz: xy(zx) is a combinator
+4. lambda xyz: xy(zxy) is a combinator
+5. lambda xy: xy(zxy) is not a combinator since z is a free variable
+
+Normal form or diverge?
+
+1. lambda x: xxx is already in normal form
+2. (lambda z: zz)(lambda y: yy) becomes (lambda y: yy)(lamda y: yy) which is 
+   alpha equivalent and diverges
+3. (lambda x: xxx)z reduces to normal form zzz
+
+Beta reduce
+
+1. 

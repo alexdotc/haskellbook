@@ -1,0 +1,28 @@
+-- Exercises: Scope
+
+--  1. yes
+--  2. no
+--  3. no
+--  4. yes
+
+area d = pi * (r*r)
+         where r = d/2
+
+-- Exercises: Syntax Errors
+
+--  1. no
+--  2. no
+--  3. yes
+
+-- Chapter Exercsies
+
+--  Reading Syntax
+
+--  a. correct
+--  b. wrong, needs parens around prefixed ++
+--  c. correct
+--  d. wrong, missing endquote to close list
+--  e. wrong, mismatched type
+--  f. wrong, mismatched type
+--  g. wrong, only 1 argument given to 2 param func
+--  h. correct
