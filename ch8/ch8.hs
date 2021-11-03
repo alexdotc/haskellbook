@@ -109,9 +109,9 @@ digitToWord d =
     7 -> "seven"
     8 -> "eight"
     9 -> "nine"
-    _ -> ""
+    _ -> wordNumber d
 
-digits :: Int -> [Int]
+digit :: Int -> [Int]
 digits n
     | n < 10 = [n]
     | otherwise = (digits $ n `div` 10) ++ [n `mod` 10]
