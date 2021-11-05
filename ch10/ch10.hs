@@ -1,4 +1,4 @@
--- Exercises Understanding Folds pg 365-367
+1-- Exercises Understanding Folds pg 365-367
 
 -- 1 b and c
 -- 2 
@@ -18,5 +18,14 @@
 --
 -- 3 c
 -- 4 a
--- 5 foldr (++) [] ["woot", "WOOT", "woot"] -- no base
--- 6 
+-- 5a foldr (++) [] ["woot", "WOOT", "woot"] -- no base
+-- 5b foldr max '\0' "fear is the little death" -- maybe there's a better more haskell-y way than null char?
+-- 5c foldr (&&) True [False, True]
+-- 5d foldr (||) False [False, True]
+-- 5e foldr ((++) . show) "" [1..5]
+-- 5f foldr (flip const) 'a' [1..5] -- this needs to return char since our base is 'a'
+-- 5g foldr (flip const) 0 'tacos'
+-- 5h foldl const 0 "burritos"
+-- 5i foldl const 'z' [1..5]
+
+
