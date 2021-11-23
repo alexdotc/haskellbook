@@ -377,9 +377,16 @@ capitalizeWord (c:s)
 
 
 --2 
+myStrings :: Char -> String -> [String]
+myStrings _ [] = []
+myStrings sep s
+  | length y == 0 = takeWhile (/= sep) s : (myStrings sep y)
+  | otherwise = takeWhile (/= sep) s : (myStrings sep $ tail y)
+  where y = dropWhile (/= sep) s
+
 capitalizeParagraph :: String -> String
-capitalizeParagraph s = foldr ((++) . capitalizeWord) [] sentences
-  where sentences = (takeWhile (/= '.') s) : [dropWhile (/= '.') s]
+capitalizeParagraph s = foldr ((++). (++ ".") . capitalizeWord) [] sentences
+  where sentences = myStrings '.' s
 
 -- Phone Exercises pg 456-458
 -- TODO -- come back before ch15
