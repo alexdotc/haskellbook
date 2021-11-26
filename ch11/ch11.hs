@@ -391,5 +391,34 @@ capitalizeParagraph s = foldr ((++). (++ ".") . capitalizeWord) [] sentences
 -- Phone Exercises pg 456-458
 -- TODO -- come back before ch15
 
+--1
+
+type Digit = Char
+type Presses = Int
+type Lower = String
+type Upper = String
+
+
+--2
+
+--reverseTaps :: DaPhone -> Char -> [(Digit, Presses)]
+--reverseTaps phone c = 
+
+--TODO finish before ch15
+
+
 -- Hutton's Razor pg 459-460
--- TODO -- come back before ch15
+
+--1
+
+data Expr = Lit Integer | Add Expr Expr deriving Show
+
+eval :: Expr -> Integer
+eval (Lit n)   = n
+eval (Add a b) = eval a + eval b
+
+--2
+
+printExpr :: Expr -> String
+printExpr (Lit n)   = show n
+printExpr (Add a b) = printExpr a ++ " + " ++ printExpr b
