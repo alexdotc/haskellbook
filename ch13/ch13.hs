@@ -29,3 +29,7 @@ palistrip :: String -> String
 palistrip = filter isLower . map toLower
 
 --4 TODO come back before ch15
+--
+-- TODO A bit more complicated but worth attempting as an exercise is
+-- changing the game so that, as with normal hangman, only incorrect
+-- guesses count towards the guess limit.
