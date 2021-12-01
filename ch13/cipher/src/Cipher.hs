@@ -1,5 +1,8 @@
-module Cipher where
+module Main where
 
+import System.Exit (exitSuccess)
+import System.IO
+import Control.Monad (forever)
 import Data.Char
 
 data ShiftDir = Left' | Right'
@@ -50,3 +53,32 @@ vigenere k s = doVigenere k s Right'
 
 unvigenere :: Keyword -> String -> String
 unvigenere k s = doVigenere k s Left'
+
+runVigenere :: IO ()
+runVigenere = do
+  putStr "Enter keyword for Vigenere cipher: "
+  kw <- getLine
+  putStr "Enter secret message: "
+  msg <- getLine
+  putStrLn $ vigenere kw msg
+
+runCaesar :: IO ()
+runCaesar = do
+  putStr "Enter number of shifts for Caesar cipher: "
+  n <- getLine
+  let shifts = (read n :: Int) -- it throws an exception if the user doesn't enter an int but oh well, haven't got to exceptions yet
+  putStr "Enter secret message: "
+  msg <- getLine
+  putStrLn $ caesar shifts msg
+
+main :: IO ()
+main = forever $ do
+  hSetBuffering stdout NoBuffering
+  putStr "Which cipher? Caesar or Vigenere: "
+  cipher <- getLine
+  case fmap toLower cipher of
+    "caesar" -> do runCaesar
+                   exitSuccess
+    "vigenere" -> do runVigenere
+                     exitSuccess
+    _ -> putStrLn "Choose either Caesar or Vigenere"
