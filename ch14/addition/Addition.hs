@@ -1,6 +1,7 @@
 module Addition where
 
 import Test.Hspec
+import Test.QuickCheck
 
 main :: IO ()
 main = hspec $ do
@@ -20,6 +21,9 @@ main = hspec $ do
       rmult 25 30 `shouldBe` 750
     it "43 times 71 is 3053" $ do
       rmult 43 71 `shouldBe` 3053
+  describe "QC1" $ do
+    it "x + 1 is always greater than x" $ do
+      property $ \x -> x + 1 > (x :: Int)
 
 rmult :: Integral a => a -> a -> a
 rmult a 1 = a
@@ -31,3 +35,56 @@ dividedBy num denom = go num denom 0
           | n < d = (count, n)
           | otherwise =
               go (n-d) d (count+1)
+
+trivialInt :: Gen Int
+trivialInt = return 1
+
+oneThroughThree :: Gen Int
+oneThroughThree = elements [1,2,3]
+
+genBool :: Gen Bool
+genBool = choose (False, True)
+
+genBool' :: Gen Bool
+genBool' = elements [False, True]
+
+genOrdering :: Gen Ordering
+genOrdering = elements [LT, EQ, GT]
+
+genChar :: Gen Char
+genChar = elements ['a'..'z']
+
+genTuple :: (Arbitrary a, Arbitrary b) => Gen (a, b)
+genTuple = do
+  a <- arbitrary
+  b <- arbitrary
+  return (a, b)
+
+genThreeple :: (Arbitrary a, Arbitrary b, Arbitrary c) => Gen (a, b, c)
+genThreeple = do
+  a <- arbitrary
+  b <- arbitrary
+  c <- arbitrary
+  return (a,b,c)
+
+genEither :: (Arbitrary a, Arbitrary b) => Gen (Either a b)
+genEither = do
+  a <- arbitrary
+  b <- arbitrary
+  elements [Left a, Right b]
+
+genMaybe :: Arbitrary a => Gen (Maybe a)
+genMaybe = do
+  a <- arbitrary
+  elements [Nothing, Just a]
+
+genMaybe' :: Arbitrary a => Gen (Maybe a)
+genMaybe' = do
+  a <- arbitrary
+  frequency [ (1, return Nothing), (3, return (Just a)) ]
+
+prop_additionGreater :: Int -> Bool
+prop_additionGreater x = x * 2 < x + 3 -- False assertion
+
+runQc :: IO ()
+runQc = quickCheck prop_additionGreater
