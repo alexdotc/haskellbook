@@ -1,0 +1,1 @@
+stack --resolver=ghc-7.10.3 ghc -- -I. --make ListyInstances.hs

@@ -27,7 +27,7 @@ gameWords = do
   where gameLength w =
           let l = length (w :: String) 
           in    l >= minWordLength
-             && l <  maxWordLength
+             && l <= maxWordLength
 
 randomWord :: WordList -> IO String
 randomWord (WordList wl) = do
