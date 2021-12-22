@@ -275,3 +275,43 @@ instance (Arbitrary a, Arbitrary b) => Arbitrary (Validation a b) where
     x <- arbitrary
     y <- arbitrary
     frequency [(3, return $ Success x), (1, return $ Failure y)]
+
+-- Chapter Exercises Monoid pg 622
+
+--1 
+
+instance Monoid Trivial where
+  mempty = Trivial
+
+--2
+
+instance Monoid a => Monoid (Identity a) where
+  mempty = Identity mempty -- dispatch a's mempty
+
+--3
+
+instance (Monoid a, Monoid b) => Monoid (Two a b) where
+  mempty = Two mempty mempty
+
+--4
+
+
+instance Monoid BoolConj where
+  mempty = BoolConj True
+
+--5
+
+instance Monoid BoolDisj where
+  mempty = BoolDisj False
+
+--6
+
+instance Monoid b => Monoid (Combine a b) where
+  mempty = Combine $ \x -> mempty -- dispatch b's mempty
+
+--7
+
+instance Monoid a => Monoid (Comp a) where
+  mempty = Comp mempty -- dispatch a's mempty
+
+--8 TODO
