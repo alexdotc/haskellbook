@@ -100,7 +100,7 @@ runQC = do
   quickCheck prop_f
   quickCheck prop_f'_conc
   quickCheck prop_reverse
---  quickCheck prop_dollar_conc TODO
+  quickCheck prop_dollar_conc
   quickCheck prop_foldr1
   quickCheck prop_foldr2
 -- 10 TODO
@@ -188,7 +188,10 @@ prop_reverse xs = rr xs == id xs
 prop_dollar :: (Eq b) => (a -> b) -> a -> Bool
 prop_dollar f a = (f $ a) == f a
 
-prop_dollar_conc = prop_dollar :: (Int -> String) -> Int -> Bool
+prop_dollar' :: (Eq b) => Fun a b -> a -> Bool
+prop_dollar' (Fun _ f) a = (f $ a) == f a
+
+prop_dollar_conc = prop_dollar' :: Fun Int String -> Int -> Bool
 
 --9
 
