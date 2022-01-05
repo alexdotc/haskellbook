@@ -314,4 +314,24 @@ instance Monoid b => Monoid (Combine a b) where
 instance Monoid a => Monoid (Comp a) where
   mempty = Comp mempty -- dispatch a's mempty
 
---8 TODO
+--8
+
+newtype Mem s a = Mem { runMem :: s -> (a,s) }
+
+f' = Mem $ \s -> ("hi", s + 1)
+
+instance Semigroup a => Semigroup (Mem s a) where
+  (Mem f) <> (Mem g) = Mem (\s -> (fst (f s) <> fst (g s), snd . g . snd $ f s))
+
+instance Monoid a => Monoid (Mem s a) where
+  mempty = Mem (\s -> (mempty, s))
+
+main''' = do
+  let rmzero = runMem mempty 0
+      rmleft = runMem (f' <> mempty) 0
+      rmright = runMem (mempty <> f') 0
+  print $ rmleft
+  print $ rmright
+  print $ (rmzero :: (String, Int))
+  print $ rmleft == runMem f' 0
+  print $ rmright == runMem f' 0

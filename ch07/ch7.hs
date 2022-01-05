@@ -180,9 +180,13 @@ g f (x,y) = (f x, y)
 -- 4,5
 
 roundTrip :: (Show a, Read a) => a -> a
-roundTrip a = read . show $ a
+roundTrip = read . show
 
--- 6 TODO COME BACK TO THIS ONE
+-- 6
 
---roundTrip' :: (Show a, Read b) => a -> b
---roundTrip' a = read :: String -> a. show $ a
+roundTrip' :: (Show a, Read b) => a -> b
+roundTrip' = read . show
+
+main = do
+  print (roundTrip 4 :: Int)
+  print (id 4)

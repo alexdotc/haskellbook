@@ -126,7 +126,7 @@ data Mood = Blah | Woot deriving (Show, Eq)
 settleDown x = if Woot == x then Blah else x
 
 -- 3a values of type Mood
--- 3b no data constructor for type Mood : 9 TODO right but wrong with error
+-- 3b No instance of Num Mood, cant dispatch Eq
 -- 3c No instance of Ord Mood, fails
 -- 4 No because Sentence "dogs" "drool" is not a valid data constructor
 
@@ -139,7 +139,7 @@ data Sentence = Sentence Subject Verb Object deriving (Eq, Show)
 s1 = Sentence "dogs" "drool"
 s2 = Sentence "Julie" "loves" "dogs"
 
--- TODO WRONG, it will typecheck. But s1 will be of type Object -> Sentence and so it can't be shown (since (->) has no instance of Show
+-- NOTE WRONG, it will typecheck. But s1 will be of type Object -> Sentence and so it can't be shown (since (->) has no instance of Show (it is a partially applied data constructor
 --
 -- Exercises pg 209 (Given a ... what can we do?)
 
@@ -189,6 +189,6 @@ chk :: Eq b => (a -> b) -> a -> b -> Bool
 chk f a b = f a == b
 
 arith :: Num b => (a -> b) -> Integer -> a -> b
-arith f a b = (f b) + fromInteger a -- TODO the fact that (f b) should have type Num b => b makes it kind of confusing that I have to use fromInteger a when I can normally add an Integer and Num constrained Num b => b. OH I see. it's that I've declared b to be constrained by Num b, and it's not that I can add that b and an Integer, it's that the result of addition would be Integer, whereas I've declared the return type (fully applied type) of arith is Num b => b. So I've accepted that b can be float or anything else with an instance Num.
+arith f a b = (f b) + fromInteger a -- NOTE the fact that (f b) should have type Num b => b makes it kind of confusing that I have to use fromInteger a when I can normally add an Integer and Num constrained Num b => b. OH I see. it's that I've declared b to be constrained by Num b, and it's not that I can add that b and an Integer, it's that the result of addition would be Integer, whereas I've declared the return type (fully applied type) of arith is Num b => b. So I've accepted that b can be float or anything else with an instance Num.
 
 
