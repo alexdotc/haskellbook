@@ -87,24 +87,24 @@ main = do
 
 runQC :: IO ()
 runQC = do
-  quickCheck prop_halfIdentity
-  quickCheck prop_listOrdered
-  quickCheck prop_plusAssociative
-  quickCheck prop_plusCommutative
-  quickCheck prop_multAssociative
-  quickCheck prop_multCommutative
-  quickCheck prop_quotrem
-  quickCheck prop_divmod
-  quickCheck prop_powAssoc -- should fail
-  quickCheck prop_powComm -- should fail
-  quickCheck prop_f
-  quickCheck prop_f'_conc
-  quickCheck prop_reverse
-  quickCheck prop_dollar_conc
-  quickCheck prop_foldr1
-  quickCheck prop_foldr2
--- 10 TODO
-  quickCheck prop_rs_conc
+  quickCheck prop_halfIdentity --1
+  quickCheck prop_listOrdered --2 
+  quickCheck prop_plusAssociative -- 3 
+  quickCheck prop_plusCommutative -- 3
+  quickCheck prop_multAssociative --4 
+  quickCheck prop_multCommutative -- 4
+  quickCheck prop_quotrem -- 5, success if not div by zero
+  quickCheck prop_divmod -- 5, success if not div by zero
+  quickCheck prop_powAssoc -- 6, should fail
+  quickCheck prop_powComm -- 6, should fail
+  quickCheck prop_reverse -- 7
+  quickCheck prop_dollar_conc -- 8
+  quickCheck prop_foldr1 -- 9
+  quickCheck prop_foldr2 -- 9
+  quickCheck prop_n_conc -- 10, very conditional
+  quickCheck prop_rs_conc -- 11
+  quickCheck prop_f -- Idempotence pg 577 #1
+  quickCheck prop_f'_conc -- Idempotence pg 577 #2
 
 --1
 
@@ -201,7 +201,12 @@ prop_foldr1 one two = foldr (:) one two == (++) two one
 prop_foldr2 :: [[Int]] -> Bool
 prop_foldr2 one = foldr (++) [] one == concat one
 
---10 TODO
+--10
+
+prop_n :: Positive Int -> [a] -> Property
+prop_n (Positive n) xs = n <= length xs ==> length (take n xs) == n
+
+prop_n_conc = prop_n :: Positive Int -> [Int] -> Property
 
 --11
 
@@ -247,3 +252,5 @@ foolgen' :: Gen Fool
 foolgen' = frequency [(2, return Fulse), (1, return Frue)]
 
 -- Chapter Exercises Hangman Testing pg578-579 TODO
+--
+-- Chapter Exercises Validating Ciphers pg 580 TODO

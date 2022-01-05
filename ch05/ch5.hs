@@ -151,7 +151,7 @@ c' :: a -> b -> b
 c' a b = b
 
 r :: [a] -> [a]
-r = undefined -- TODO
+r = id
 
 co :: (b -> c) -> (a -> b) -> a -> c
 co a b c = a (b c)

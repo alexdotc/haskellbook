@@ -63,7 +63,6 @@ instance Eq a => Eq (Which a) where
   (==) (ThatOne a) (ThisOne a') = (==) a a'
 
 
--- TODO ??????
 data EitherOr a b = Hello a | Goodbye b deriving Show
 instance (Eq a, Eq b) => Eq (EitherOr a b) where
   (==) (Hello a) (Hello a') = a == a'
