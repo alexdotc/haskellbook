@@ -389,23 +389,7 @@ capitalizeParagraph s = foldr ((++). (++ ".") . capitalizeWord) [] sentences
   where sentences = myStrings '.' s
 
 -- Phone Exercises pg 456-458
--- TODO -- come back before ch15
-
---1
-
-type Digit = Char
-type Presses = Int
-type Lower = String
-type Upper = String
-
-
---2
-
---reverseTaps :: DaPhone -> Char -> [(Digit, Presses)]
---reverseTaps phone c = 
-
---TODO finish before ch15
-
+-- TODO
 
 -- Hutton's Razor pg 459-460
 

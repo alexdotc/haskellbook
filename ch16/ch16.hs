@@ -103,6 +103,7 @@ type IdentityIdentity = Identity Int -> Bool
 type IdentityCompose  = Identity Int -> Fun Int String -> Fun String Char -> Bool
 
 --2
+
 data Pair a = Pair a a deriving (Eq, Show)
 
 instance Functor Pair where
@@ -152,7 +153,6 @@ type ThreeIdentity = Three Char [Int] String -> Bool
 type ThreeCompose  = Three Char [Int] String -> Fun String Int -> Fun Int String -> Bool
 
 --5
-
 
 data Three' a b = Three' a b b deriving (Eq, Show)
 
