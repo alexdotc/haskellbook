@@ -137,7 +137,7 @@ instance Applicative List where
   (Cons f fs) <*> (Cons x xs) = Cons (f x) (fmap f xs) `append` (fs <*> (Cons x xs))
   _ <*> _ = Nil
 
--- Exercise ZipList Applicative pg 736;
+-- Exercise ZipList Applicative pg 736
 
 take' :: Int -> List a -> List a
 take' n Nil = Nil
@@ -256,6 +256,14 @@ instance Applicative Pair where
   pure x = Pair x x
   (Pair f g) <*> (Pair a b) = Pair (f a) (g b)
 
+instance Eq a => EqProp (Pair a) where
+  (=-=) = eq
+
+type PT = Pair (String, Int, Char)
+
+ptAp :: PT
+ptAp = undefined
+
 --2
 
 data Two a b = Two a b deriving (Eq, Show)
@@ -272,6 +280,14 @@ instance (Arbitrary a, Arbitrary b) => Arbitrary (Two a b) where
 instance Monoid a => Applicative (Two a) where
   pure x = Two mempty x
   (Two a f) <*> (Two b c) = Two (a <> b) (f c)
+
+instance (Eq a, Eq b) => EqProp (Two a b) where
+  (=-=) = eq
+
+type TwoT = Two (Sum Int) (String, Int, Char)
+
+twoAp :: TwoT
+twoAp = undefined
 
 --3
 
@@ -292,6 +308,14 @@ instance (Monoid a, Monoid b) => Applicative (Three a b) where
   pure x = Three mempty mempty x
   (Three a b f) <*> (Three c d e) = Three (a <> c) (b <> d) (f e)
 
+instance (Eq a, Eq b, Eq c) => EqProp (Three a b c) where
+  (=-=) = eq
+
+type ThreeT = Three String (Product Int) (Char, Sum Int, [Int])
+
+threeAp :: ThreeT
+threeAp = undefined
+
 --4
 
 data Three' a b = Three' a b b deriving (Eq, Show)
@@ -310,6 +334,14 @@ instance (Arbitrary a, Arbitrary b) => Arbitrary (Three' a b)
 instance (Monoid a) => Applicative (Three' a) where
   pure x = Three' mempty x x
   (Three' a f g) <*> (Three' b c d) = Three' (a <> b) (f c) (g d)
+
+instance (Eq a, Eq b) => EqProp (Three' a b) where
+  (=-=) = eq
+
+type Three'T = Three' String (Char, [String], Int)
+
+three'Ap :: Three'T
+three'Ap = undefined
 
 --5
 
@@ -331,6 +363,14 @@ instance (Monoid a, Monoid b, Monoid c) => Applicative (Four a b c) where
   pure x = Four mempty mempty mempty x
   (Four a b c f) <*> (Four d e g h) = Four (a <> d) (b <> e) (c <> g) (f h)
 
+instance (Eq a, Eq b, Eq c, Eq d) => EqProp (Four a b c d) where
+  (=-=) = eq
+
+type FourT = Four String String String (Char, Int, [Int])
+
+fourAp :: FourT
+fourAp = undefined
+
 --6
 
 data Four' a b = Four' a a a b deriving (Eq, Show)
@@ -350,6 +390,14 @@ instance (Monoid a) => Applicative (Four' a) where
   pure x = Four' mempty mempty mempty x
   (Four' a b c f) <*> (Four' d e g h) = Four' (a <> d) (b <> e) (c <> g) (f h)
 
+instance (Eq a, Eq b) => EqProp (Four' a b) where
+  (=-=) = eq
+
+type Four'T = Four' String (Char, Int, [Int])
+
+four'Ap :: Four'T
+four'Ap = undefined
+
 -- Chapter Exercises Combinations pg 742
 
 stops :: String
@@ -359,7 +407,7 @@ vowels :: String
 vowels = "aeiou"
 
 combos :: [a] -> [b] -> [c] -> [(a,b,c)]
-combos = undefined
+combos xs ys zs = liftA3 (,,) xs ys zs
 
 main :: IO ()
 main = do
@@ -368,3 +416,9 @@ main = do
   --quickBatch $ monoid $ ZipList [1 :: Sum Int]
   --quickBatch $ applicative $ ZipList' $ Cons ("a", "b", "c") Nil -- TODO
   quickBatch $ applicative validation
+  quickBatch $ applicative ptAp
+  quickBatch $ applicative twoAp
+  quickBatch $ applicative threeAp
+  quickBatch $ applicative three'Ap
+  quickBatch $ applicative fourAp
+  quickBatch $ applicative four'Ap
