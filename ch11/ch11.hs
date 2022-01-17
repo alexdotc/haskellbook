@@ -3,6 +3,7 @@
 
 import Data.Char
 import Data.Int
+import Data.List
 
 -- Exercises pg 396 Dog Types
 
@@ -389,8 +390,105 @@ capitalizeParagraph s = foldr ((++). (++ ".") . capitalizeWord) [] sentences
   where sentences = myStrings '.' s
 
 -- Phone Exercises pg 456-458
--- TODO
 
+--1
+
+type Digit = Char
+type Presses = Int
+data DaButton = Button Digit String
+type DaPhone = [DaButton]
+
+tehPhone :: DaPhone
+tehPhone = [Button '2' "abc", Button '3' "def", Button '4' "ghi"
+           ,Button '5' "jkl", Button '6' "mno", Button '7' "pqrs"
+           ,Button '8' "tuv", Button '9' "wxyz", Button '0' "+ "]
+
+--2
+
+convo :: [String]
+convo =
+    ["Wanna play 20 questions",
+    "Ya",
+    "U 1st haha",
+    "Lol ok. Have u ever tasted alcohol",
+    "Lol ya",
+    "Wow ur cool haha. Ur turn",
+    "Ok. Do u think I am pretty Lol",
+    "Lol ya",
+    "Just making sure rofl ur turn"]
+
+reverseTaps :: DaPhone -> Char -> [(Digit, Presses)]
+reverseTaps ((Button digit s):buttons) c
+  | c == '.'  = [('#', 1)]
+  | c == ','  = [('#', 2)]
+  | c == '+'  = [('0', 1)]
+  | c == ' '  = [('0', 2)]
+  | c == '1'  = [('1', 1)]
+  | isUpper c = ('*', 1) : reverseTaps ((Button digit s):buttons) (toLower c)
+  | isLower c = if c `elem` s then [(digit, howManyPresses c s)]
+                              else reverseTaps buttons c
+  | isDigit c = if c == digit then [(digit, 1 + length s)]
+                              else reverseTaps buttons c
+  | otherwise = [('X', 0)] -- invalid char, no button on da phone
+  where howManyPresses x (y:ys) = if x == y then 1 else 1 + howManyPresses x ys
+
+cellPhonesDead :: DaPhone -> String -> [(Digit, Presses)]
+cellPhonesDead daphone s = s >>= reverseTaps daphone
+
+convertConvo :: DaPhone -> [String] -> [[(Digit, Presses)]]
+convertConvo daphone convo = map (cellPhonesDead daphone) convo
+
+--3
+
+fingerTaps :: [(Digit, Presses)] -> Presses
+fingerTaps = foldr ((+) . snd) 0
+
+ftConvo :: [[(Digit, Presses)]] -> [Presses]
+ftConvo = map fingerTaps
+
+--4
+
+mostPopularLetter :: String -> Char
+mostPopularLetter s =  go (0,'\0') s
+  where go (n,ch) [] = ch
+        go (n,ch) (c:cs)
+          | not (isAlpha c) = go (n,ch) cs -- skip spaces and punctuation
+          | ln c > n        = go (ln c,c) cs
+          | otherwise       = go (n,ch) cs
+          where ln c = length (filter (==c) s)
+
+mostPopularLetterCost :: String -> Int
+mostPopularLetterCost s 
+  | isUpper (mpl) = nTimes + fingerTaps scost
+  | otherwise = fingerTaps scost
+  where scost = filter (==(theRealOne $ reverseTaps tehPhone $ mpl)) (cellPhonesDead tehPhone s)
+        theRealOne rts = if (fst $ head rts) == '*' then (rts !! 1) else (rts !! 0)
+        mpl = mostPopularLetter s
+        nTimes = length scost
+
+mplConvo :: [(Char, Int)]
+mplConvo = zip (map mostPopularLetter convo) (map mostPopularLetterCost convo)
+
+--5
+
+coolestLtr :: [String] -> Char
+coolestLtr = mostPopularLetter . concat
+
+coolestWord :: [String] -> String
+coolestWord ws = go (0, "") iws
+  where go (n, wo) [] = wo
+        go (n, wo) (wor:wors)
+          | ln wor > n = go (ln wor, wor) wors
+          | otherwise  = go (n, wo) wors
+          where ln wo = length (filter (==wo) iws)
+        iws = words . intercalate " " $ ws
+
+clConvo :: Char
+clConvo = coolestLtr convo
+
+cwConvo :: String
+cwConvo = coolestWord convo
+        
 -- Hutton's Razor pg 459-460
 
 --1
