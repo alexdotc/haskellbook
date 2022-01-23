@@ -60,6 +60,6 @@ gimmePerson = do
     Left (PersonInvalidUnknown s) -> putStrLn $ "Not a person: " ++ s
 
 --
--- TODO A bit more complicated but worth attempting as an exercise is
--- changing the game so that, as with normal hangman, only incorrect
+-- DONE in hangman dir A bit more complicated but worth attempting as an
+-- exercise is changing the game so that, as with normal hangman, only incorrect
 -- guesses count towards the guess limit.

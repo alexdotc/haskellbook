@@ -3,7 +3,7 @@ module Main where
 import Control.Monad (forever)
 import Data.Char (toLower)
 import Data.Maybe (isJust, fromMaybe)
-import Data.List (intersperse)
+import Data.List (intersperse, nub)
 import System.Exit (exitSuccess)
 import System.Random (randomRIO)
 
@@ -88,12 +88,16 @@ handleGuess puzzle guess = do
       return (fillInCharacter puzzle guess)
 
 gameOver :: Puzzle -> IO ()
-gameOver (Puzzle wordToGuess _ guessed) =
-  if (length guessed) > 10 then
+gameOver p@(Puzzle wordToGuess _ guessed) =
+  if (incorrectGuesses p) >= 10 then
     do putStrLn "You lose!"
        putStrLn $ "The word was: " ++ wordToGuess
        exitSuccess
   else return ()
+
+incorrectGuesses :: Puzzle -> Int
+incorrectGuesses (Puzzle _ correct all) = length all - length (unique correct)
+  where unique xs = nub $ filter (/= Nothing) xs
 
 gameWin :: Puzzle -> IO ()
 gameWin (Puzzle wordToGuess filledInSoFar _) =
