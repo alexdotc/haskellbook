@@ -251,6 +251,10 @@ foolgen = frequency [(1, return Fulse), (1, return Frue)]
 foolgen' :: Gen Fool
 foolgen' = frequency [(2, return Fulse), (1, return Frue)]
 
--- Chapter Exercises Hangman Testing pg578-579 TODO
---
--- Chapter Exercises Validating Ciphers pg 580 TODO
+-- Chapter Exercises Hangman Testing pg578-579
+
+-- Added to ch13 hangman module
+
+-- Chapter Exercises Validating Ciphers pg 580
+
+-- Added to ch13 cipher module

@@ -171,5 +171,6 @@ a = flip (<*>)
 --5
 
 meh :: Monad m => [a] -> (a -> m b) -> m [b]
-meh [] _ = []
-meh (x:xs) f = x >>= f (meh xs f)
+meh = undefined -- TODO
+
+--6 TODO

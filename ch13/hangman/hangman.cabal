@@ -8,6 +8,13 @@ build-type:          Simple
 cabal-version:       >=1.10
 extra-source-files:  data/dict.txt
 
+library
+  exposed-modules: Hangman
+  hs-source-dirs:  src
+  ghc-options:     -Wall -fwarn-tabs
+  build-depends:   base >= 4.7 && <5
+                 , random
+
 executable hangman
   hs-source-dirs:      src
   main-is:             Main.hs
@@ -15,3 +22,13 @@ executable hangman
   build-depends:       base >= 4.7 && < 5
                      , random
                      , split
+
+test-suite tests
+  type:             exitcode-stdio-1.0
+  main-is:          Tests.hs
+  hs-source-dirs:   tests
+  ghc-options:      -Wall -fno-warn-orphans
+  build-depends:    base >=4.7 && <5
+                 ,  QuickCheck
+                 ,  hangman
+  default-language: Haskell2010

@@ -4,6 +4,7 @@ import System.Exit (exitSuccess)
 import System.IO
 import Control.Monad (forever)
 import Data.Char
+import Test.QuickCheck
 
 data ShiftDir = Left' | Right'
 type Keyword = String
@@ -42,6 +43,7 @@ uncaesar n s = map (\c -> shift c n Left') s
 
 doVigenere :: Keyword -> String -> ShiftDir -> String
 doVigenere  _ [] _ = []
+doVigenere  [] s _ = s
 doVigenere (c:k) (c':s) d
   | not $ isUppercaseAlpha c' || isLowercaseAlpha c'
               = c'       : (doVigenere (c:k) s d)
@@ -82,3 +84,28 @@ main = forever $ do
     "vigenere" -> do runVigenere
                      exitSuccess
     _ -> putStrLn "Choose either Caesar or Vigenere"
+
+-- ch14 exercises
+
+caesarGen :: Gen (Int, String)
+caesarGen = do
+  n <- arbitrary
+  s <- arbitrary
+  return $ (n, s)
+
+vigenereGen :: Gen (Keyword, String)
+vigenereGen = do
+  k <- arbitrary
+  s <- arbitrary
+  return $ (k,s)
+
+prop_Caesar :: Property
+prop_Caesar = forAll caesarGen (\(n,s) -> (uncaesar n . caesar n $ s) == s)
+
+prop_Vigenere :: Property
+prop_Vigenere = forAll vigenereGen (\(n,s) -> (unvigenere n . vigenere n $ s) == s)
+
+runQC :: IO ()
+runQC = do
+  quickCheck prop_Caesar
+  quickCheck prop_Vigenere
