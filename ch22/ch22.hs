@@ -3,6 +3,7 @@
 
 import Control.Applicative
 import Data.Char
+import Data.Maybe
 
 boop = (*2)
 doop = (+10)
@@ -79,7 +80,6 @@ data Dog =
   } deriving (Eq, Show)
 
 -- Exercise Reading Comprehension
-
 --1
 myliftA2 :: Applicative f => (a -> b -> c) -> f a -> f b -> f c
 myliftA2 = \f -> \x -> \y -> f <$> x <*> y
@@ -94,3 +94,93 @@ instance Applicative (Reader r) where
   pure = \r -> Reader (\x -> r)
   (<*>) :: Reader r (a -> b) -> Reader r a -> Reader r b
   (Reader rab) <*> (Reader ra) = Reader $ \r -> rab r (ra r)
+
+-- Exercise Reader Monad
+--1
+instance Monad (Reader r) where
+  return = pure
+  (>>=) :: Reader r a -> (a -> Reader r b) -> Reader r b
+  (Reader ra) >>= aRb = Reader $ \r -> runReader (aRb $ ra r) r
+
+--2
+getDogRM :: Reader Person Dog
+getDogRM = do
+  name <- Reader dogName
+  addy <- Reader address
+  return $ Dog name addy
+
+data MPIData = MPIData { mpiRank :: Int } deriving (Eq, Show)
+type MPI a = Reader MPIData a
+
+rank :: MPI Int
+rank = Reader mpiRank
+
+ranks :: [Int]
+ranks = do
+  x <- [0..9]
+  return $ runReader rank $ MPIData x
+
+--Chapter Exercises 
+--Warm up
+
+x = [1,2,3]
+y = [4,5,6]
+z = [7,8,9]
+
+xs :: Maybe Integer
+xs = lookup 3 $ zip x y
+
+ys :: Maybe Integer
+ys = lookup 6 $ zip y z
+
+zs :: Maybe Integer
+zs = lookup 4 $ zip x y
+
+z' :: Integer -> Maybe Integer
+z' n = lookup n $ zip x z
+
+x1 :: Maybe (Integer, Integer)
+x1 = (,) <$> xs <*> ys
+
+x2 :: Maybe (Integer, Integer)
+x2 = (,) <$> ys <*> zs
+
+x3 :: Integer -> (Maybe Integer, Maybe Integer)
+x3 = \n -> (z' n, z' n)
+
+summed :: Num c => (c, c) -> c
+summed = uncurry (+)
+
+bolt :: Integer -> Bool
+bolt = liftA2 (&&) (>3) (<8)
+
+fromMaybe' :: a -> Maybe a -> a
+fromMaybe' z Nothing  = z
+fromMaybe' _ (Just x) = x
+
+sequA :: Integral a => a -> [Bool]
+sequA m = sequenceA [(>3), (<8), even] m
+
+main :: IO ()
+main = do
+  print $
+    sequenceA [Just 3, Just 2, Just 1]
+  print $ sequenceA [x, y]
+  print $ sequenceA [xs, ys]
+  print $ summed <$> ((,) <$> xs <*> ys)
+  print $ fmap summed ((,) <$> xs <*> zs)
+  print $ bolt 7
+  print $ fmap bolt z
+  print $ sequA 7
+  print $ sequA 6
+  --1
+  print $ foldr (&&) True $ sequA 7
+  print $ foldr (&&) True $ sequA 6
+  --2
+  let s' = summed <$> ((,) <$> xs <*> ys)
+  print $ sequA . fromMaybe 0 $ s'
+  --3
+  print $ bolt . fromMaybe 0 $ ys
+
+-- Rewriting Shawty
+-- TODO
