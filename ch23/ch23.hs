@@ -122,12 +122,12 @@ main = mapM_ putStrLn $ fizzbuzzFromTo 1 100
 -- Chapter Exercises
 
 --1
-get' :: State s s
-get' = state $ \s -> (s, s)
+get' :: State' s s
+get' = State' $ \s -> (s, s)
 
 --2
-put' :: s -> State s ()
-put' s = state $ \s -> ((), s)
+put' :: s -> State' s ()
+put' s = State' $ \_ -> ((), s)
 
 --3
 exec :: State' s a -> s -> s
