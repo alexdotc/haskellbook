@@ -163,8 +163,9 @@ a = flip (<*>)
 --5
 meh :: Monad m => [a] -> (a -> m b) -> m [b]
 meh [] _ = return []
-meh (x:xs) f = undefined --TODO
-  
+meh (x:xs) f = do
+  r <- f x
+  (r:) <$> meh xs f
 
 --6
 flipTypes :: Monad m => [m a] -> m [a]

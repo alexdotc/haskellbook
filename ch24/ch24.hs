@@ -42,7 +42,7 @@ pStr (x:xs) = char x >>= (\px -> pStr xs >>= (\ps -> return (px:ps)))
 
 --Exercises Unit of Success
 pInt :: Parser Integer
-pInt =  integer >>= (\pn -> eof >> return pn)
+pInt = integer >>= (\pn -> eof >> return pn)
 
 main = do
   pNL "stop:"

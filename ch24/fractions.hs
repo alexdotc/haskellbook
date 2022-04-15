@@ -11,6 +11,10 @@ alsoBad = "10"
 shouldWork = "1/2"
 shouldAlsoWork = "2/1"
 
+dec1 = "5.67"
+dec2 = "-1.5"
+bad = "1.-5"
+
 parseFraction :: Parser Rational
 parseFraction = do
   numerator <- decimal
@@ -27,14 +31,32 @@ virtuousFraction = do
     0 -> fail "Denominator cannot be zero"
     _ -> return (numerator % denominator)
 
+-- Exercise Try Try pg 943
+
+parseDecimal :: Parser Double
+parseDecimal = do
+  n <- many (char '-')
+  d <- double
+  if null n then return d else return ((-1)*d)
+
+parseDecimalOrFraction :: Parser (Either Rational Double)
+parseDecimalOrFraction = try (Left <$> virtuousFraction) <|> (Right <$> parseDecimal)
+
 main :: IO ()
 main = do
   let parseFraction' =
         parseString parseFraction mempty
+  let parseDecimal' =
+        parseString parseDecimal mempty
+  let parseDF' =
+        parseString parseDecimalOrFraction mempty
   print $ parseFraction' shouldWork
   print $ parseFraction' shouldAlsoWork
-  print $ parseFraction' alsoBad
-  print $ parseFraction' badFraction
+  print $ parseDecimal' dec1
+  print $ parseDecimal' dec2
+  print $ parseDF' dec1
+  print $ parseDF' shouldWork
+  print $ parseDecimal' bad
 
 testVirtuous :: IO ()
 testVirtuous = do
