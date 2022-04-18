@@ -3,27 +3,29 @@
 module Text.Fractions where
 
 import Control.Applicative
+import Data.Attoparsec.Text (parseOnly)
 import Data.Ratio ((%))
+import Data.String (IsString)
 import Text.Trifecta
 
+badFraction :: IsString s => s
 badFraction = "1/0"
+
+alsoBad :: IsString s => s
 alsoBad = "10"
+
+shouldWork :: IsString s => s
 shouldWork = "1/2"
+
+shouldAlsoWork :: IsString s => s
 shouldAlsoWork = "2/1"
 
 dec1 = "5.67"
 dec2 = "-1.5"
 bad = "1.-5"
 
-parseFraction :: Parser Rational
+parseFraction :: (Monad m, MonadFail m, TokenParsing m) => m Rational
 parseFraction = do
-  numerator <- decimal
-  char '/'
-  denominator <- decimal
-  return (numerator % denominator)
-
-virtuousFraction :: Parser Rational
-virtuousFraction = do
   numerator <- decimal
   char '/'
   denominator <- decimal
@@ -40,7 +42,7 @@ parseDecimal = do
   if null n then return d else return ((-1)*d)
 
 parseDecimalOrFraction :: Parser (Either Rational Double)
-parseDecimalOrFraction = try (Left <$> virtuousFraction) <|> (Right <$> parseDecimal)
+parseDecimalOrFraction = try (Left <$> parseFraction) <|> (Right <$> parseDecimal)
 
 main :: IO ()
 main = do
@@ -58,11 +60,16 @@ main = do
   print $ parseDF' shouldWork
   print $ parseDecimal' bad
 
-testVirtuous :: IO ()
-testVirtuous = do
-  let virtuousFraction' =
-        parseString virtuousFraction mempty
-  print $ virtuousFraction' shouldWork
-  print $ virtuousFraction' shouldAlsoWork
-  print $ virtuousFraction' alsoBad
-  print $ virtuousFraction' badFraction
+main2 :: IO ()
+main2 = do
+  let attoP = parseOnly parseFraction
+  print $ attoP badFraction
+  print $ attoP shouldWork
+  print $ attoP shouldAlsoWork
+  print $ attoP alsoBad
+  let p f i =
+        parseString f mempty i
+  print $ p parseFraction badFraction
+  print $ p parseFraction shouldWork
+  print $ p parseFraction shouldAlsoWork
+  print $ p parseFraction alsoBad
