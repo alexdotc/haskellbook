@@ -77,3 +77,15 @@ instance Bifunctor Either where
   bimap f g (Left a) = Left $ f a
   bimap f g (Right a) = Right $ g a
 
+newtype IdentityT m a = IdentityT { runIdentityT :: m a }
+
+instance Functor m => Functor (IdentityT m) where
+  fmap f (IdentityT ma) = IdentityT $ f <$> ma
+
+instance Applicative m => Applicative (IdentityT m) where
+  pure x = IdentityT $ pure x
+  (IdentityT fab) <*> (IdentityT fa) = IdentityT $ fab <*> fa
+
+instance Monad m => Monad (IdentityT m) where
+  return = pure
+  (IdentityT ma) >>= f = IdentityT $ ma >>= runIdentityT . f
