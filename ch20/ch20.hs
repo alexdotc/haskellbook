@@ -1,25 +1,22 @@
 import Data.Monoid
 import Data.Bool
 
--- Exercises Library Functions Page 835
+-- Exercises Library Functions pg 836
 
 --1
 
-sum :: (Foldable t, Num a) => t a -> a
-sum = getSum . foldMap Sum
+sum' :: (Foldable t, Num a) => t a -> a
+sum' = getSum . foldMap Sum
 
 --2
 
-product :: (Foldable t, Num a) => t a -> a
-product = getProduct . foldMap Product
+product' :: (Foldable t, Num a) => t a -> a
+product' = getProduct . foldMap Product
 
 --3
 
-elem :: (Foldable t, Eq a) => a -> t a -> Bool
-elem x = getAny . foldMap (Any . (==x))
-
 elem' :: (Foldable t, Eq a) => a -> t a -> Bool
-elem' x = foldr ((||) . (==x)) False
+elem' x = getAny . foldMap (Any . (==x)) 
 
 --4
 
@@ -39,18 +36,18 @@ maximum = foldr (f . Just) Nothing
 
 --6
 
-null :: (Foldable t) => t a -> Bool
-null = foldr (\a -> \b -> False) True
+null' :: Foldable t => t a -> Bool
+null' = getAll . foldMap (\_ -> All False)
 
 --7
 
-length :: (Foldable t) => t a -> Int
-length = foldr ((+) . const 1) 0
+length' :: Foldable t => t a -> Int
+length' = getSum . foldMap (Sum . \_ -> 1)
 
 --8
 
-toList :: (Foldable t) => t a -> [a]
-toList = foldr (:) []
+toList' :: Foldable t => t a -> [a]
+toList' = foldMap (:[])
 
 --9
 
