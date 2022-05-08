@@ -25,7 +25,7 @@ instance (Applicative f, Applicative g) => Applicative (Compose f g) where
 
 instance (Foldable f, Foldable g) => Foldable (Compose f g) where
   foldMap :: Monoid m => (a -> m) -> Compose f g a -> m
-  foldMap f (Compose fga) = foldMap (id . foldMap f) fga
+  foldMap f (Compose fga) = (foldMap . foldMap) f fga
 
 --2
 
