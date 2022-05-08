@@ -28,11 +28,10 @@ instance (Foldable f, Foldable g) => Foldable (Compose f g) where
   foldMap f (Compose fga) = foldMap (id . foldMap f) fga
 
 --2
--- TODO come back after ch21
 
 instance (Traversable f, Traversable g) => Traversable (Compose f g) where
   traverse :: Applicative h => (a -> h b) -> Compose f g a -> h (Compose f g b)
-  traverse = undefined
+  traverse f (Compose fga) = Compose <$> (traverse . traverse) f fga
 
 -- Exercise Bifunctor pg 992
 
