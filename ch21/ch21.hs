@@ -188,6 +188,10 @@ instance (Arbitrary a, Arbitrary b) => Arbitrary (Bigger a b) where
 instance (Eq a, Eq b) => EqProp (Bigger a b) where
   (=-=) = eq
 
+-- S TODO
+
+-- Tree TODO
+
 test :: IO ()
 test = do
   let tIdentity :: Identity (Int, Int, [Int])
@@ -213,3 +217,11 @@ test = do
   let tPair :: Pair (Int, Int, [Int]) (Int, Int, [Int])
       tPair = undefined
   quickBatch (traversable tPair)
+  
+  let tBig :: Big (Int, Int, [Int]) (Int, Int, [Int])
+      tBig = undefined
+  quickBatch (traversable tBig)
+  
+  let tBigger :: Bigger (Int, Int, [Int]) (Int, Int, [Int])
+      tBigger = undefined
+  quickBatch (traversable tBigger)
