@@ -27,4 +27,39 @@ instance Monad m => Monad (EitherT e m) where
                             Right a -> runEitherT $ f a
 
 --4
+swapEither :: Either e a -> Either a e
+swapEither (Left x)  = Right x
+swapEither (Right x) = Left x
 
+swapEitherT :: Functor m => EitherT e m a -> EitherT a m e
+swapEitherT (EitherT mea) = EitherT $ swapEither <$> mea
+
+--5
+eitherT :: Monad m => (a -> m c) -> (b -> m c) -> EitherT a m b -> m c
+eitherT f g (EitherT mab) = mab >>= (go f g)
+  where go f _ (Left x)  = f x
+        go _ g (Right x) = g x
+
+-- Exercises StateT pg 1019
+
+--1
+newtype StateT s m a = StateT { runStateT :: s -> m (a,s) }
+
+instance Functor m => Functor (StateT s m) where
+  fmap f (StateT mas) = StateT $ (fmap . fmap) (go f) mas
+    where go f (a, s) = (f a, s)
+
+--2
+instance (Monad m) => Applicative (StateT s m) where
+  pure x = StateT $ \s -> pure (x,s)
+  (StateT smabs) <*> (StateT smas) = StateT $ \s -> do
+                                                (f, s') <- smabs s
+                                                (a, s'') <- smas s'
+                                                return (f a, s'')
+
+--3
+instance (Monad m) => Monad (StateT s m) where
+  return = pure
+  (StateT smas) >>= f = StateT $ \s -> do
+                                    (a, s') <- smas s
+                                    runStateT (f a) s'
