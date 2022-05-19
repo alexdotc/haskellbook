@@ -1,5 +1,9 @@
 {-# LANGUAGE InstanceSigs #-}
 
+import Control.Monad.Trans.Except
+import Control.Monad.Trans.Maybe
+import Control.Monad.Trans.Reader
+
 -- Exercsies EitherT pg 1015
 
 newtype EitherT e m a = EitherT { runEitherT :: m (Either e a) }
@@ -63,3 +67,11 @@ instance (Monad m) => Monad (StateT s m) where
   (StateT smas) >>= f = StateT $ \s -> do
                                     (a, s') <- smas s
                                     runStateT (f a) s'
+
+-- Exercises Wrapping it Up pg 1026
+
+embedded' :: MaybeT (ExceptT String IO) Int
+embedded' = MaybeT (ExceptT $ return (Right (Just 1)))
+
+embedded :: MaybeT (ExceptT String (ReaderT () IO)) Int
+embedded = MaybeT (ExceptT (ReaderT (return <$> (const (Right (Just 1))))))
