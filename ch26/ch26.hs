@@ -1,8 +1,10 @@
 {-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 
 import Control.Monad.Trans.Except
-import Control.Monad.Trans.Maybe
 import Control.Monad.Trans.Reader
+import Control.Monad.Trans.Maybe
+import Control.Monad.Trans
 
 -- Exercsies EitherT pg 1015
 
@@ -75,3 +77,35 @@ embedded' = MaybeT (ExceptT $ return (Right (Just 1)))
 
 embedded :: MaybeT (ExceptT String (ReaderT () IO)) Int
 embedded = MaybeT (ExceptT (ReaderT (return <$> (const (Right (Just 1))))))
+
+-- Exercises Lift More pg 1037
+
+--1
+instance MonadTrans (EitherT e) where
+  lift = EitherT . (<$>) Right
+
+--2
+instance MonadTrans (StateT s) where
+  lift :: Monad m => m a -> StateT s m a
+  lift = \ma -> StateT $ (\s -> ma >>= (\a -> return (a, s)))
+
+-- Exercises Some Instances pg 1043
+
+newtype MaybeT2 m a = MaybeT2 (MaybeT m a) deriving (Eq, Show, Functor, Applicative, Monad)
+newtype ReaderT2 r m a = ReaderT2 (ReaderT r m a) deriving (Functor, Applicative, Monad)
+newtype StateT2 s m a = StateT2 (StateT s m a) deriving (Functor, Applicative, Monad)
+
+--1
+instance (MonadIO m) => MonadIO (MaybeT2 m) where
+  liftIO :: IO a -> MaybeT2 m a
+  liftIO = MaybeT2 . lift . liftIO
+
+--2
+instance (MonadIO m) => MonadIO (ReaderT2 r m) where
+  liftIO :: IO a -> ReaderT2 r m a
+  liftIO = ReaderT2 . lift . liftIO
+
+--3
+instance (MonadIO m) => MonadIO (StateT2 s m) where
+  liftIO :: IO a -> StateT2 s m a
+  liftIO = StateT2 . lift . liftIO
