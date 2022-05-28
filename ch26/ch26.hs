@@ -5,6 +5,8 @@ import Control.Monad.Trans.Except
 import Control.Monad.Trans.Reader
 import Control.Monad.Trans.Maybe
 import Control.Monad.Trans
+import Control.Monad
+import Data.Functor.Identity
 
 -- Exercsies EitherT pg 1015
 
@@ -109,3 +111,57 @@ instance (MonadIO m) => MonadIO (ReaderT2 r m) where
 instance (MonadIO m) => MonadIO (StateT2 s m) where
   liftIO :: IO a -> StateT2 s m a
   liftIO = StateT2 . lift . liftIO
+
+-- Chapter Exercises
+-- Write the Code pg 1053
+
+--1
+rDec :: Num a => Reader a a
+rDec = ReaderT $ \x -> Identity (x - 1)
+
+--2
+rDec' :: Num a => Reader a a
+rDec' = ReaderT $ Identity <$> ((-)1)
+
+--3
+rShow :: Show a => ReaderT a Identity String
+rShow = ReaderT $ \x -> Identity $ show x
+
+--4
+rShow' :: Show a => ReaderT a Identity String
+rShow' = ReaderT $ Identity . show
+
+--5
+rPrintAndInc :: (Num a, Show a) => ReaderT a IO a
+rPrintAndInc = ReaderT $ \x -> do
+                putStrLn $ concat ["Hi: ", show x]
+                return $ x + 1
+
+--6
+sPrintIncAccum :: (Num a, Show a) => StateT a IO String
+sPrintIncAccum = StateT $ \x -> do
+                   let s = show x
+                   putStrLn $ concat ["Hi: ", s]
+                   return (s, x+1)
+
+-- Fix the Code pg 1055
+
+isValid :: String -> Bool
+isValid v = '!' `elem` v
+
+maybeExcite :: MaybeT IO String
+maybeExcite = MaybeT $ do
+  v <- getLine
+  case isValid v of
+    False -> return Nothing
+    True -> return $ Just v 
+
+doExcite :: IO ()
+doExcite = do
+  putStrLn "say something excite!"
+  excite <- runMaybeT maybeExcite
+  case excite of
+    Nothing -> putStrLn "MOAR EXCITE" 
+    Just e -> putStrLn ("Good, was very excite: " ++ e)
+
+
