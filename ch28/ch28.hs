@@ -102,7 +102,9 @@ mutableUpdateST n = runST $ do
 
 main :: IO ()
 main = defaultMain
-  [ bench "member check map" $ whnf membersMap 9999
+  [ bench "concat list" $ whnf schlemiel 123456
+  , bench "concat dlist" $ whnf constructDlist 123456
+  , bench "member check map" $ whnf membersMap 9999
   , bench "member check set" $ whnf membersSet 9999
   , bench "concat lists" $ nf mconcat lists
   , bench "concat seqs" $ nf mconcat seqs
@@ -140,4 +142,50 @@ singleton = \x -> (DL $ \_ -> [x])
 --3
 toList :: DList a -> [a]
 {-# INLINE toList #-}
-toList dl = unDL dl []
+toList xs = unDL xs []
+
+--4
+infixr `cons`
+cons :: a -> DList a -> DList a
+cons x xs = DL ((x:) . unDL xs)
+{-# INLINE cons #-}
+
+--5
+infixl `snoc`
+snoc :: DList a -> a -> DList a
+snoc xs x = DL ((++[x]) . unDL xs)
+{-# INLINE snoc #-}
+
+--6
+append :: DList a -> DList a -> DList a
+append xs ys = DL $ ((flip (++)) (toList ys) . unDL xs)
+{-# INLINE append #-}
+
+schlemiel :: Int -> [Int]
+schlemiel i = go i []
+  where go 0 xs = xs
+        go n xs = go (n-1) ([n] ++ xs) 
+
+constructDlist :: Int -> [Int]
+constructDlist i = toList $ go i empty
+  where go 0 xs = xs
+        go n xs =
+          go (n-1)
+          (singleton n `append` xs)
+
+-- Queue pg 1158
+
+data Queue a = 
+  Queue { enqueue :: [a]
+        , dequeue :: [a]
+        } deriving (Eq, Show)
+
+push :: a -> Queue a -> Queue a
+push = \a (Queue eq dq) -> Queue (a:eq) dq
+
+pop :: Queue a -> Maybe (a, Queue a)
+pop = \q -> case (dequeue q, enqueue q) of
+  ([], []) -> Nothing
+  ([], xs) -> Just (r, Queue [] rs)
+    where (r:rs) = reverse xs
+  (xs, ys) -> Just (head xs, Queue ys (tail xs))
