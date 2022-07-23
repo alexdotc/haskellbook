@@ -1,6 +1,6 @@
 module Main where
 
-import System.Exit (exitSuccess, exitFailure)
+import System.Exit
 import System.IO
 import System.Environment
 import Control.Monad (forever, replicateM)
@@ -57,12 +57,16 @@ doVigenere f k i = hPutStrLn stdout $ f k i
 main :: IO ()
 main = forever $ do
   args <- getArgs
-  case length args of
-    2 -> return ()
-    _ -> do { putStrLn "Must have a mode , then key, try again"; exitFailure }
-  case (head args, last args) of
-    ("-d", k) -> do { i <- hGetContents stdin; doVigenere unvigenere k i; exitSuccess }
-    ("-e", k) -> do { i <- hGetContents stdin; doVigenere vigenere k i; exitSuccess }
+  case length args >= 2 of
+    True -> return ()
+    False -> do die "Must have a mode , then key, try again"
+  gi <- hWaitForInput stdin 10000
+  i <- case gi of
+    True -> hGetLine stdin
+    False -> do die "Timed out"
+  case (args !! 0, args !! 1) of
+    ("-d", k) -> do { doVigenere unvigenere k i; exitSuccess }
+    ("-e", k) -> do { doVigenere vigenere k i; exitSuccess }
     _         -> do { putStrLn "Invalid mode"; exitFailure }
 
 vigenereGen :: Gen (Keyword, String)
