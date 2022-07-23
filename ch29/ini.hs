@@ -104,7 +104,9 @@ parseIni = do
 -- Exercise pg 1179
 parseIniDir :: IO [FilePath] -> IO (Map FilePath (Result Config))
 parseIniDir d = do
-  M.fromList <$> (fmap . fmap) (\f -> (f, parseString parseIni mempty f)) (d >>= traverse readFile)
+  fs <- d
+  r <-(fmap . fmap) (\f -> parseString parseIni mempty f) (traverse readFile fs)
+  return $ M.fromList $ zip fs r
 
 endsWith :: Eq a => [a] -> [a] -> Bool
 endsWith p s@(_:xs)
@@ -120,9 +122,9 @@ maybeSuccess _ = Nothing
 
 ppIni :: IO ()
 ppIni = do
-  let files = filter (\s -> endsWith ".ini" s) <$> (getCurrentDirectory >>= listDirectory) 
-  parsed <- parseIniDir files
-  print parsed
+  let files = filter (\s -> endsWith ".ini" s) <$> (getCurrentDirectory >>= listDirectory)
+  results <- parseIniDir files
+  print results
 
 main :: IO ()
 main = hspec $ do
