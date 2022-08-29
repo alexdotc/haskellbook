@@ -35,6 +35,7 @@ instance ToRow User where
 insertUserQuery :: Query
 insertUserQuery = "INSERT INTO users VALUES (?, ?, ?, ?, ?, ?)"
 
+-- 1 except just do it in sqlite3 with hardcoded values after ".open finger.db"
 updateUserQuery :: Query
 updateUserQuery = "UPDATE users SET shell = ?, homeDirectory = ?, realName = ?, phone = ? WHERE username = ?"
 
