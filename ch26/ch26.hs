@@ -163,5 +163,3 @@ doExcite = do
   case excite of
     Nothing -> putStrLn "MOAR EXCITE" 
     Just e -> putStrLn ("Good, was very excite: " ++ e)
-
--- TODO Morra pg 1058
